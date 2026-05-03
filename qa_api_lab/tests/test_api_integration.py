@@ -19,7 +19,7 @@ def db_connection():
             product_id INTEGER NOT NULL,
             title TEXT NOT NULL,
             price REAL NOT NULL,
-            cantidad INTEGER DEFAULT 1,
+            cantidad INTEGER DEFAULT 1 CHECK(cantidad > 0),
             description TEXT,
             category TEXT,
             image TEXT
@@ -110,33 +110,22 @@ def test_validar_total_carrito(db_connection):
     assert total_productos == total_esperado_productos
     assert monto_total == pytest.approx(monto_esperado)
 
-#Validacion de cantidades incorrertas en el carrito
-def test_validar_cantidad(db_connection):
+#Validacion de cantidades incorrectas en el carrito
+def test_validar_cantidad_negativa(db_connection):
     cursor = db_connection.cursor()
 
     response = requests.get(f"{BASE_URL}/products", timeout=10)
     product = response.json()[0]
 
-    cantidad = 1  # simulada
+    cantidad = -1  # cantidad invalida
 
-    assert cantidad > 0  # regla de negocio
+    with pytest.raises(sqlite3.IntegrityError):
+        cursor.execute("""
+            INSERT INTO carrito (user_id, product_id, title, price, cantidad)
+            VALUES (?, ?, ?, ?, ?)
+        """, (1, product['id'], product['title'], product['price'], cantidad))
 
-    cursor.execute("""
-        INSERT INTO carrito (user_id, product_id, title, price, cantidad)
-        VALUES (?, ?, ?, ?, ?)
-    """, (1, product['id'], product['title'], product['price'], cantidad))
-
-    db_connection.commit()
-
-    cursor.execute("""
-        SELECT cantidad
-        FROM carrito
-        WHERE user_id = ? AND product_id = ?
-    """, (1, product['id']))
-
-    cantidad_guardada = cursor.fetchone()[0]
-
-    assert cantidad_guardada > 0
+        db_connection.commit()
 
 #Prueba de idempotencia
 def test_idempotencia_insercion_carrito(db_connection):
