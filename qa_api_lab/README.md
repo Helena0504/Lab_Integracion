@@ -18,7 +18,7 @@ Antes de ejecutar el laboratorio, instalar:
 - Python 3.10 o superior.
 - Postman.
 - Conexion a internet.
-- Dependencias de Python: `pytest` y `requests`.
+- Dependencias de Python: `pytest`, `MagicMock` y `requests`.
 
 ## Estructura del proyecto
 
