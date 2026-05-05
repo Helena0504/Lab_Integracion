@@ -32,7 +32,7 @@ def db_connection():
     yield conn
     conn.close()
 
-#----- 1 Insertar producto consultado en SQLite -----
+
 #TESTEO DEL API. DONDE SE CONSULTA EL PRODUCTO
 def test_consultar_productos():
     response = requests.get(f'{BASE_URL}/products', timeout=10)
@@ -48,6 +48,32 @@ def test_consultar_productos():
     assert 'title' in product
     assert 'price' in product
     assert isinstance(product['price'], (int, float))
+
+
+#----- 1 Insertar producto consultado en SQLite -----
+def test_insertar_producto(db_connection):
+    cursor = db_connection.cursor()
+
+    response = requests.get(f'{BASE_URL}/products', timeout=10)
+    assert response.status_code == 200
+
+    products = response.json()
+    assert isinstance(products, list)
+    assert len(products) > 0
+
+    product = products[0]
+
+    cursor.execute("""
+        INSERT INTO carrito (user_id, product_id, title, price, cantidad, description, category, image)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (1, product['id'], product['title'], product['price'], 1, product['description'], product['category'], product['image']))
+    
+    db_connection.commit()
+
+    cursor.execute("SELECT COUNT(*) FROM carrito")
+    total = cursor.fetchone()[0]
+
+    assert total == 1
 
 #----- 2 Validar total del carrito -----
 #Creacion de la primera prueba de integracion, calcular el total del carrito
