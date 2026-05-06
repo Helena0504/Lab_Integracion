@@ -19,7 +19,7 @@ Encontrará los entregables ubicados en los siguientes documentos:
     - Reporte final con métricas, hallazgos, defectos y conclusiones.
 - Dentro de la carpeta "qa_api_lab" encontrará
     - El proyecto python con los tests realizados con Pytest y SQLite en memoria
-    - requirements
+    - requirements.txt
     - Las instrucciones de su ejecución se encuentran más adelante
 - De manera separada encontrará dos JSON, correspondientes a la collection y el environment de Postman
 
