@@ -10,6 +10,20 @@ La API utilizada es:
 ```text
 https://fakestoreapi.com
 ```
+## Entregables
+Encontrará los entregables ubicados en los siguientes documentos:
+- En el pdf "Laboratorio_Integracion.pdf" encontrará:
+    - La matriz de casos de prueba.
+    - Las capturas de ejecución de Postman.
+    - La evidencia de ejecución de Pytest.
+    - Reporte final con métricas, hallazgos, defectos y conclusiones.
+- Dentro de la carpeta "qa_api_lab" encontrará
+    - Los tests realizados con pytest
+    - requirements
+    - Las instrucciones de su ejecución se encuentran más adelante
+- De manera separada encontrará dos JSON, correspondientes a la collection y el environment de postman
+
+
 
 ## Requisitos
 

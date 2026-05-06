@@ -1,0 +1,733 @@
+{
+  "info": {
+    "_postman_id": "79f59649-67cf-4f4c-b1db-6e992ceae9da",
+    "name": "API - Carrito",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54418743",
+    "_collection_link": "https://go.postman.co/collection/44963113-79f59649-67cf-4f4c-b1db-6e992ceae9da?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Catálogo",
+      "item": [
+        {
+          "name": "Consultar Productos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiempo menor a 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Es un array\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Lista no vacía\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Producto tiene estructura correcta\", function () {\r",
+                  "    const product = pm.response.json()[0];\r",
+                  "\r",
+                  "    pm.expect(product).to.have.property(\"id\");\r",
+                  "    pm.expect(product).to.have.property(\"title\");\r",
+                  "    pm.expect(product).to.have.property(\"price\");\r",
+                  "    pm.expect(product).to.have.property(\"description\");\r",
+                  "    pm.expect(product).to.have.property(\"category\");\r",
+                  "    pm.expect(product).to.have.property(\"image\");\r",
+                  "});\r",
+                  "\r",
+                  "const product = pm.response.json()[0];\r",
+                  "\r",
+                  "pm.environment.set(\"product_id\", product.id);\r",
+                  "pm.environment.set(\"product_price\", product.price);\r",
+                  "pm.environment.set(\"product_title\", product.title);\r",
+                  "pm.environment.set(\"product_description\", product.description);\r",
+                  "pm.environment.set(\"product_category\", product.category);\r",
+                  "pm.environment.set(\"product_image\", product.image);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Añadir Producto",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"product_title\", \"Producto prueba\");\r",
+                  "pm.environment.set(\"product_price\", 10.5);\r",
+                  "pm.environment.set(\"product_description\", \"Producto creado desde Postman\");\r",
+                  "pm.environment.set(\"product_category\", \"test\");\r",
+                  "pm.environment.set(\"product_image\", \"http://example.com/image.jpg\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "pm.test(\"Tiempo menor a 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "pm.test(\"Respuesta tiene estructura de producto\", function () {\r",
+                  "    const product = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(product).to.have.property(\"id\");\r",
+                  "    pm.expect(product).to.have.property(\"title\");\r",
+                  "    pm.expect(product).to.have.property(\"price\");\r",
+                  "    pm.expect(product).to.have.property(\"description\");\r",
+                  "    pm.expect(product).to.have.property(\"category\");\r",
+                  "    pm.expect(product).to.have.property(\"image\");\r",
+                  "});\r",
+                  "pm.test(\"Price es un número\", function () {\r",
+                  "    const product = pm.response.json();\r",
+                  "    pm.expect(product.price).to.be.a(\"number\");\r",
+                  "});\r",
+                  "// Guardar ID del producto\r",
+                  "const product = pm.response.json();\r",
+                  "pm.environment.set(\"product_id\", product.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"{{product_title}}\",\r\n  \"price\": {{product_price}},\r\n  \"description\": \"{{product_description}}\",\r\n  \"category\": \"{{product_category}}\",\r\n  \"image\": \"{{product_image}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar un producto por id",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Si no hay product_id guardado, usar uno por defecto\r",
+                  "if (!pm.environment.get(\"product_id\")) {\r",
+                  "    pm.environment.set(\"product_id\", 1);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Status 200\r",
+                  "pm.test(\"Status code es 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "// Tiempo de respuesta\r",
+                  "pm.test(\"Tiempo menor a 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "// Contrato JSON completo\r",
+                  "pm.test(\"Producto tiene todos los campos requeridos\", function () {\r",
+                  "    const product = pm.response.json();\r",
+                  "    pm.expect(product).to.have.property(\"id\");\r",
+                  "    pm.expect(product).to.have.property(\"title\");\r",
+                  "    pm.expect(product).to.have.property(\"price\");\r",
+                  "    pm.expect(product).to.have.property(\"description\");\r",
+                  "    pm.expect(product).to.have.property(\"category\");\r",
+                  "    pm.expect(product).to.have.property(\"image\");\r",
+                  "});\r",
+                  "\r",
+                  "// El producto existe (tiene ID)\r",
+                  "pm.test(\"El producto está en existencia\", function () {\r",
+                  "    const product = pm.response.json();\r",
+                  "    pm.expect(product.id).to.exist;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Carrito",
+      "item": [
+        {
+          "name": "Anadir carrito",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiempo menor a 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Respuesta tiene estructura de carrito\", function () {\r",
+                  "    const cart = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(cart).to.have.property(\"id\");\r",
+                  "    pm.expect(cart).to.have.property(\"userId\");\r",
+                  "    pm.expect(cart).to.have.property(\"products\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Products es una lista\", function () {\r",
+                  "    const cart = pm.response.json();\r",
+                  "    pm.expect(cart.products).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "const cart = pm.response.json();\r",
+                  "pm.environment.set(\"cart_id\", cart.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 0,\r\n  \"userId\": 1,\r\n  \"products\": [\r\n    {\r\n      \"id\": {{product_id}}\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/carts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "carts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener un carrito",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (!pm.environment.get(\"cart_id\")) {\r",
+                  "    pm.environment.set(\"cart_id\", 1);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiempo menor a 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Respuesta tiene estructura de carrito\", function () {\r",
+                  "    const cart = pm.response.json();\r",
+                  "    pm.expect(cart).to.have.property(\"id\");\r",
+                  "    pm.expect(cart).to.have.property(\"userId\");\r",
+                  "    pm.expect(cart).to.have.property(\"products\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Products es una lista\", function () {\r",
+                  "    const cart = pm.response.json();\r",
+                  "    pm.expect(cart.products).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/carts/{{cart_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "carts",
+                "{{cart_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Total",
+      "item": [
+        {
+          "name": "Calcular Total Carrito",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Calcular total del carrito\", function () {\r",
+                  "    const productPrice = Number(pm.environment.get(\"product_price\"));\r",
+                  "    const quantity = 1;\r",
+                  "\r",
+                  "    const totalEsperado = productPrice * quantity;\r",
+                  "\r",
+                  "    pm.expect(productPrice).to.be.above(0);\r",
+                  "    pm.expect(totalEsperado).to.be.above(0);\r",
+                  "\r",
+                  "    pm.environment.set(\"cart_total\", totalEsperado);\r",
+                  "\r",
+                  "    console.log(\"Precio:\", productPrice);\r",
+                  "    console.log(\"Cantidad:\", quantity);\r",
+                  "    console.log(\"Total esperado:\", totalEsperado);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 0,\r\n  \"userId\": 1,\r\n  \"products\": [\r\n    {\r\n      \"id\": {{product_id}}\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/carts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "carts"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Checkout",
+      "item": []
+    },
+    {
+      "name": "Errores",
+      "item": [
+        {
+          "name": "Anadir datos invalidos al carrito",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Error claro y controlado\", function () {\r",
+                  "    const status = pm.response.code;\r",
+                  "\r",
+                  "    if (status >= 400) {\r",
+                  "        let body = pm.response.text();\r",
+                  "\r",
+                  "        pm.expect(body.length).to.be.above(0);\r",
+                  "        console.log(\"Error controlado recibido:\", body);\r",
+                  "    } else {\r",
+                  "        console.log(\"Hallazgo: la API aceptó datos inválidos y respondió con éxito:\", status);\r",
+                  "    }\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": \"1.99\",\r\n  \"userId\": \"J1.2\",\r\n  \"products\": [\r\n    {\r\n      \"id\": \"1.66gg\"\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/carts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "carts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Anadir producto invalido al carrito",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Error claro y controlado\", function () {\r",
+                  "    const status = pm.response.code;\r",
+                  "\r",
+                  "    if (status >= 400) {\r",
+                  "        let body = pm.response.text();\r",
+                  "\r",
+                  "        pm.expect(body.length).to.be.above(0);\r",
+                  "        console.log(\"Error controlado recibido:\", body);\r",
+                  "    } else {\r",
+                  "        console.log(\"Hallazgo: la API aceptó datos inválidos y respondió con éxito:\", status);\r",
+                  "    }\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiempo menor a 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Respuesta tiene estructura de carrito\", function () {\r",
+                  "    const cart = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(cart).to.have.property(\"id\");\r",
+                  "    pm.expect(cart).to.have.property(\"userId\");\r",
+                  "    pm.expect(cart).to.have.property(\"products\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Products es una lista\", function () {\r",
+                  "    const cart = pm.response.json();\r",
+                  "    pm.expect(cart.products).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "const cart = pm.response.json();\r",
+                  "pm.environment.set(\"cart_id\", cart.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 0,\r\n  \"userId\": 1,\r\n  \"products\": [\r\n    {\r\n      \"id\": -1\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/carts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "carts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar producto inexistente",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"product_id_invalido\", -10);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Manejo de errores (esperado >= 400)\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.at.least(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Mensaje de error en el body\", function () {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.expect(response).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiempo menor a 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Estructura de respuesta de error\", function () {\r",
+                  "    pm.expect(pm.response.json()).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id_invalido}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id_invalido}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enviar body incompleto a carts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Manejo de errores (esperado >= 400)\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.at.least(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Mensaje de error en el body\", function () {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.expect(response).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiempo menor a 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Estructura de respuesta de error\", function () {\r",
+                  "    pm.expect(pm.response.json()).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 0\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/carts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "carts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enviar body incompleto a products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Manejo de errores (esperado >= 400)\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.at.least(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Mensaje de error en el body\", function () {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.expect(response).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Tiempo menor a 1000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Estructura de respuesta de error\", function () {\r",
+                  "    pm.expect(pm.response.json()).to.be.an(\"object\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "packages": {},
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"id\": 1,\r\n  \"title\": \"string\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
